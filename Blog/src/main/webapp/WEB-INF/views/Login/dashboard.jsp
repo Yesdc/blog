@@ -5,6 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -12,10 +14,25 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <meta charset="UTF-8">
 <title>대시보드다</title>
-<style>
+<style> 
 </style>
+<script>
+ window.onload=function(){
+	
+	var getPage=document.getElementById("getPage").value;
+	var page=document.getElementById(eval("'"+getPage+"'"));
+	page.className ='page-item active';
+
+  
+  
+}   
+
+
+</script>
+
 </head>
 <body>
+<input type="hidden" name="name" value="${getPage}" id="getPage">
 	<a href="/Login/logout">로그아웃</a>
 	</p>
 
@@ -64,18 +81,17 @@
 			</c:if>
 			<c:forEach begin="${pageMaker.startPage }"
 				end="${pageMaker.endPage }" var="pageNum">
-				<li class="page-item"><a class="page-link"
-					href='<c:url value="/Login/dashboard?page=${pageNum }"/>'  name="page">${pageNum }</a></li>
-			</c:forEach>
+				<li class="page-item" id="${pageNum }"><a class="page-link"
+					href='<c:url value="/Login/dashboard?page=${pageNum }"/>' name="page"  >${pageNum }</a></li>
+			</c:forEach> 
 			<c:if test="${pageMaker.next && pageMaker.endPage >0 }">
 				<li class="page-item"><a
 					href='<c:url value="/Login/dashboard?page=${pageMaker.endPage+1 }"/>' class="page-link">Next</a></li>
 			</c:if>
-		 
-		</ul>
-		
+		</ul> 
+
   
-		                                                                                                    
+		                                                                                               
 	</div>  
 
 </body>

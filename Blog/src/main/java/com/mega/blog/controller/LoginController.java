@@ -27,22 +27,39 @@ public class LoginController {
 	
 	@Autowired
 	UserService userService;
+
+
+	
+	
+	
+	
 //	게시판 메인화면
 	@RequestMapping("Login/dashboard")
 	public String dashboard(Model model, Criteria cri) {
 		List<BoardVO> result = boardService.getBoardList(cri);
 		System.out.println(result);
+		
+		
 //		ModelAndView mav = new ModelAndView();
 //		mav.addObject("result",result); 
 		PageMaker pageMaker = new PageMaker();
+		
 	    pageMaker.setCri(cri);
 	    pageMaker.setTotalCount(boardService.countBoardList());
-		
+	    int getPage;
+		getPage=cri.getPage();
+	
 	    model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("result", result);
+		model.addAttribute("getPage", getPage);
+		
 		return "Login/dashboard";
 	}
-
+	
+	
+	
+	
+	
 //	글쓰기 페이지
 	@RequestMapping("Login/boardwrite")
 	public String boardwrite() {
