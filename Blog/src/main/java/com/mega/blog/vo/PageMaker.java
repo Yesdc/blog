@@ -1,5 +1,8 @@
 package com.mega.blog.vo;
 
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 public class PageMaker {
     
 //	현재 페이지 번호
@@ -75,5 +78,29 @@ public class PageMaker {
     public void setDisplayPageNum(int displayPageNum) {
         this.displayPageNum = displayPageNum;
     }
- 
+    public String makeQueryPage(int page) {
+        UriComponents uri = UriComponentsBuilder.newInstance()
+                .queryParam("page", page)
+                .queryParam("perPageNum", cri.getPerPageNum())
+                .build();
+        return uri.toUriString();
+    }
+    
+    public String makeQueryPage(int id, int page) {
+        UriComponents uri = UriComponentsBuilder.newInstance()
+                .queryParam("id", id)
+                .queryParam("page", page)
+                .queryParam("perPageNum", cri.getPerPageNum())
+                .build();
+        return uri.toUriString();
+    }
+    public String makeQueryPage(String key, String val, int page) {
+        UriComponents uri = UriComponentsBuilder.newInstance()
+        		.queryParam("searchKey", key)
+                .queryParam("sname", val)
+                .queryParam("page", page)
+                .queryParam("perPageNum", cri.getPerPageNum())
+                .build();
+        return uri.toUriString();
+    }
 }

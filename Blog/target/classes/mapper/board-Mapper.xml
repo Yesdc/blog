@@ -4,7 +4,25 @@
 
 <!-- 가져오기 -->
 <select id="getBoardList" resultType="Board">
-select * from board ORDER BY create_time DESC LIMIT #{pageStart}, #{perPageNum};
+select * from board 
+<where>
+			<if test="(sname != null) and (!sname.equals(''))">
+				<choose>
+					<when
+						test="searchKey eq 'searchTitle'.toString()">
+						and subject Like CONCAT('%', #{sname}, '%')
+					</when>
+					<when
+						test="searchKey eq 'searchContents'.toString()">
+						and context LIKE CONCAT('%', #{sname}, '%')
+					</when>
+					<otherwise>
+						AND 1=2
+					</otherwise>
+				</choose>
+			</if>
+</where>
+ORDER BY create_time DESC LIMIT #{cri.pageStart}, #{cri.perPageNum};
 </select>
 
 <!-- 글쓰기 -->
@@ -20,7 +38,23 @@ values(#{id},#{subject},#{context},#{attachments},#{likes},#{views},now(),null);
             count(*)
         FROM
             board
-  
+            <where>
+			<if test="(sname != null) and (!sname.equals(''))">
+				<choose>
+					<when
+						test="searchKey eq 'searchTitle'.toString()">
+						and subject Like CONCAT('%', #{sname}, '%')
+					</when>
+					<when
+						test="searchKey eq 'searchContents'.toString()">
+						and context LIKE CONCAT('%', #{sname}, '%')
+					</when>
+					<otherwise>
+						AND 1=2
+					</otherwise>
+				</choose>
+			</if>
+</where>  
 </select>
 
 
@@ -39,6 +73,8 @@ UPDATE board SET views = views+1 WHERE id = #{id}
 		DELETE FROM board WHERE id = #{id}
 </delete>
 
-
+<update id="updateBoard">
+UPDATE board SET subject = #{subject}, context = #{context}, update_time = now() WHERE id = #{id}
+</update>
 </mapper> 
 

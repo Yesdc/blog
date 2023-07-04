@@ -11,6 +11,8 @@ private int likes;
 private int views; 
 private Date create_time; 
 private Date update_time;
+private String searchKey; 
+private String sname;
 public int getId() {
 	return id;
 }
@@ -56,16 +58,28 @@ public void setCreate_time(Date create_time) {
 public Date getUpdate_time() {
 	return update_time;
 }
+public void setUpdate_time(Date update_time) {
+	this.update_time = update_time;
+}
+public String getSearchKey() {
+	return searchKey;
+}
+public void setSearchKey(String searchKey) {
+	this.searchKey = searchKey;
+}
+public String getSname() {
+	return sname;
+}
+public void setSname(String sname) {
+	this.sname = sname;
+}
 @Override
 public String toString() {
 	return "BoardVO [id=" + id + ", subject=" + subject + ", context=" + context + ", attachments=" + attachments
 			+ ", likes=" + likes + ", views=" + views + ", create_time=" + create_time + ", update_time=" + update_time
-			+ "]";
-}
-public void setUpdate_time(Date update_time) {
-	this.update_time = update_time;
+			+ ", searchKey=" + searchKey + ", sname=" + sname + "]";
 }
 
-//get and set ...
+
 
 }

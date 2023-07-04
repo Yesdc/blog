@@ -1,16 +1,21 @@
 package com.mega.blog.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mega.blog.service.BoardService;
 import com.mega.blog.service.UserService;
@@ -24,39 +29,104 @@ import com.mega.blog.vo.PageMaker;
 public class LoginController {
 	@Autowired
 	BoardService boardService;
-	
+
 	@Autowired
 	UserService userService;
 
-
-	
-	
-	
-	
 //	게시판 메인화면
 	@RequestMapping("Login/dashboard")
-	public String dashboard(Model model, Criteria cri) {
-		List<BoardVO> result = boardService.getBoardList(cri);
-		System.out.println(result);
+	public String dashboard(Model model, Criteria cri, @RequestParam Map<String, Object> paramMap) {
+		String searchKey = (String) paramMap.get("searchKey");
+		String sname = (String) paramMap.get("sname");
 		
+		List<BoardVO> result = boardService.getBoardList(cri,paramMap);
+		System.out.println(paramMap);
+
+//		ModelAndView mav = new ModelAndView();
+//		mav.addObject("result",result); 
+		PageMaker pageMaker = new PageMaker();
+
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(boardService.countBoardList(paramMap));
+		int getPage;
+		getPage = cri.getPage();
+//		System.out.println(getPage);
+//		System.out.println(pageMaker.getTotalCount());
+		model.addAttribute("pageMaker", pageMaker);
+		model.addAttribute("result", result);
+		model.addAttribute("getPage", getPage);
+		model.addAttribute("searchKey", searchKey);
+		model.addAttribute("sname", sname);
+
+
+		return "Login/dashboard"; 
+	}
+	
+//	게시판 메인화면
+	@RequestMapping("Login/dashBoardSearch")
+	public String  dashBoardSearch(Model model, Criteria cri, @RequestParam Map<String, Object> paramMap) {
+		
+		List<BoardVO> result = boardService.getBoardList(cri,paramMap);
+		System.out.println(result);
+
+//		ModelAndView mav = new ModelAndView();
+//		mav.addObject("result",result); 
+		PageMaker pageMaker = new PageMaker();
+
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(boardService.countBoardList(paramMap));
+		int set;
+		
+		int getPage;
+		
+		
+		getPage = cri.getPage();
+		
+		System.out.println(paramMap);
+		
+		System.out.println(pageMaker.getTotalCount());
+		model.addAttribute("pageMaker", pageMaker);
+		model.addAttribute("result", result);
+		model.addAttribute("getPage", getPage);
+
+		return "Login/dashBoardList";
+		
+	} 
+	
+//	게시판 메인화면
+	@RequestMapping("Login/paging")
+	public String  paging(Model model, Criteria cri, @RequestParam Map<String, Object> paramMap) {
+		String searchKey = (String) paramMap.get("searchKey");
+		String sname = (String) paramMap.get("sname");
+		
+		List<BoardVO> result = boardService.getBoardList(cri,paramMap);
+//		System.out.println(result); 
 		
 //		ModelAndView mav = new ModelAndView();
 //		mav.addObject("result",result); 
 		PageMaker pageMaker = new PageMaker();
+
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(boardService.countBoardList(paramMap));
+		int set;
 		
-	    pageMaker.setCri(cri);
-	    pageMaker.setTotalCount(boardService.countBoardList());
-	    int getPage;
-		getPage=cri.getPage();
-	
-	    model.addAttribute("pageMaker", pageMaker);
+		int getPage;
+		getPage = cri.getPage();
+		
+//		System.out.println(paramMap);
+		
+//		System.out.println(pageMaker.getTotalCount());
+		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("result", result);
 		model.addAttribute("getPage", getPage);
+		model.addAttribute("searchKey", searchKey);
+		model.addAttribute("sname", sname);
+
+		return "Login/paging";
 		
-		return "Login/dashboard";
-	}
-	
-	
+	} 
+		
+
 	
 	
 	
@@ -68,125 +138,155 @@ public class LoginController {
 	}
 
 //	글쓰기 insert
-	@RequestMapping(value = "Login/boardinsert")
+	@RequestMapping("Login/boardinsert")
 	@ResponseBody
 	public int boardwrite(BoardVO board) {
 		int result = 0;
+	
 //		글쓰기
 		result = boardService.boardwrite(board);
 		return result;
 	}
 
+
+	
 //	글보기
 	@RequestMapping("Login/boardDetail")
-	public String boardDetail(int id, Model model) {
+	public String boardDetail(int id, Criteria cri, Model model) {
 //		조회수 ++
 		boardService.viewsUpdate(id);
 //		글내용 가져오기
 		BoardVO result = boardService.getBoardDetail(id);
-		
+
 		model.addAttribute("result", result);
-		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		model.addAttribute("pageMaker", pageMaker);
 		// ModelAndView mav = new ModelAndView();
 //		mav.addObject("result",result);
 		System.out.println(result);
 		return "Login/boardDetail";
 	}
-	
-	
-//	글삭제 
-	@RequestMapping(value = "Login/deleteBoard")
+ 
+//	글수정 페이지
+	@RequestMapping("Login/boardModify")
+	public String boardModify(int id, Criteria cri, Model model) {
+		BoardVO result = boardService.getBoardDetail(id);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		model.addAttribute("pageMaker", pageMaker);
+		
+		model.addAttribute("result", result);
+
+		return "Login/boardModify";
+	}
+
+//	글수정 update
+	@RequestMapping("Login/updateBoard")
 	@ResponseBody
-	public int deleteBoard(int id) {
+	public int upadateBoard(int id, BoardVO board) {
+		
 		int result = 0;
-//		글쓰기
-		result = boardService.deleteBoard(id);;
+		result = boardService.updateBoard(id, board);
 		return result;
 	}
 
-	
+//	글삭제  
+	@RequestMapping(value = "Login/deleteBoard")
+	@ResponseBody
+	public int deleteBoard(int id, Criteria cri, RedirectAttributes redAttr, Model model) {
+		int result = 0;
+//		글쓰기
+		result = boardService.deleteBoard(id);
+		;
+
+		redAttr.addAttribute("page", cri.getPage());
+		redAttr.addAttribute("perPagNum", cri.getPerPageNum());
+		return result;
+	}
+
 //	로그인페이지
 	@RequestMapping("Login/loginPage")
 	public String login() {
-		
+
 		return "Login/loginPage";
 	}
-	
+
 //	회원가입 페이지
 	@RequestMapping("Login/signUpPage")
 	public String signUp() {
-		
+
 		return "Login/signUpPage";
 	}
-	
+
 //	로그아웃
 	@RequestMapping("Login/logout")
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginUser");
 		return "/Login/loginPage";
 	}
-	
+
 //	로그인                              
 	@RequestMapping("Login/login")
 	@ResponseBody
-	public int login(MembersVO members,HttpSession session) {
-		int result = 0; 
+	public int login(MembersVO members, HttpSession session) {
+		int result = 0;
 		String col = null;
 		col = "userId";
 		System.out.println(members);
-		MembersVO userIdCheck = userService.getUserOne(members.getUserId(),col);
-		if(userIdCheck == null) {
+		MembersVO userIdCheck = userService.getUserOne(members.getUserId(), col);
+		if (userIdCheck == null) {
 			result = 2;
-		}else {
-		
-		if(members.getUserId().equals(userIdCheck.getUserId())) {
-			//ID OK
-			if(members.getPassword().equals(userIdCheck.getPassword())) {
-				//PW OK 
-				session.setAttribute("loginUser", userIdCheck);
+		} else {
 
-				result = 3;
-			}else {
+			if (members.getUserId().equals(userIdCheck.getUserId())) {
+				// ID OK
+				if (members.getPassword().equals(userIdCheck.getPassword())) {
+					// PW OK
+					session.setAttribute("loginUser", userIdCheck);
+
+					result = 3;
+				} else {
+					result = 2;
+				}
+
+			} else {
+				// ID not OK
 				result = 2;
 			}
-			
-		}else {
-			//ID not OK
-			result = 2;
 		}
-		}
-		
+
 		return result;
 	}
-	
+
 //	회원가입
-	@RequestMapping(value="Login/signUp",method = RequestMethod.POST)
+	@RequestMapping(value = "Login/signUp", method = RequestMethod.POST)
 	@ResponseBody
 	public int signUp(MembersVO members) {
-		int result = 0; 
+		int result = 0;
 		String col = "";
-	
+
 		col = "userId";
 		System.out.println(members);
-		
-		
-		MembersVO userIdCheck = userService.getUserOne(members.getUserId(),col);
-		
-		if(userIdCheck != null) {
-		result = 2; 
+
+		MembersVO userIdCheck = userService.getUserOne(members.getUserId(), col);
+
+		if (userIdCheck != null) {
+			result = 2;
 		}
-		
+
 		col = "nickname";
-		MembersVO userNicknameCheck = userService.getUserOne(members.getNickname(),col);
-		if(userNicknameCheck != null) { result = 3; }	
-		
-		if(result < 2) {
-		
-		result = userService.userJoin(members);	
+		MembersVO userNicknameCheck = userService.getUserOne(members.getNickname(), col);
+		if (userNicknameCheck != null) {
+			result = 3;
 		}
-		
-		
+
+		if (result < 2) {
+
+			result = userService.userJoin(members);
+		}
+
 		return result;
 	}
-	
+
 }

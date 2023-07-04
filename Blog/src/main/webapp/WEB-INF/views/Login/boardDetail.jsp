@@ -14,13 +14,15 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <meta charset="UTF-8">
 <title>글 내용</title>
-
-<script type="text/javascript">
+ 
+<script type="text/javascript"> 
 
 var id= ${result.id}; 
-  
+ 
 function boardDelete(){
-	
+	 if (confirm("정말 삭제하시겠습니까?") == true){    //확인
+
+	 
 $.ajax({
 	  
 		url : "/Login/deleteBoard",
@@ -30,9 +32,10 @@ $.ajax({
 			
 		}, 
 		success:function(data){
+			
 			if(data == 1){
 				alert("삭제되었습니다.");
-				location.href="/Login/dashboard";
+				location.href='<c:url value='/Login/dashboard${pageMaker.makeQueryPage(result.id, page) }'/>';
 			}else {
 				alert("삭제실패");
 			}
@@ -40,8 +43,13 @@ $.ajax({
 			console.log("error");
 		}
 		
-	})
-	
+	}) 
+	 }else{   //취소
+
+	     return false;
+
+	 }
+
 }
 
 function boardUpdate(){
@@ -53,6 +61,8 @@ function boardUpdate(){
 <body>
 	<form>
 		<input type=hidden id="id" value=`${result.id}` name="id"> 
+
+		
 		<div class="container mt-3">
 			<table class="table table-bordered">
   
@@ -74,15 +84,17 @@ function boardUpdate(){
 
 					</tr>
 
-				</tbody>
+				</tbody>               
 			</table>
-			<input type="button" value="수정" class="btn btn-outline-dark"
-				onclick="boardUpdate()" /> <input type="button" value="삭제"
-				class="btn btn-outline-dark" onclick="boardDelete()" /> <input
+			<a href='<c:url value='/Login/boardModify${pageMaker.makeQueryPage(result.id, pageMaker.cri.page) }'/>'><input type="button" value="수정" class="btn btn-outline-dark"
+				onclick="boardUpdate()" /></a> <input type="button" value="삭제"
+				class="btn btn-outline-dark" onclick="boardDelete()"/>  
+				<a href='<c:url value='/Login/dashboard${pageMaker.makeQueryPage(page) }'/>'>
+				<input
 				type="button" value="목록보기" class="btn btn-outline-dark"
-				onclick="javascript:location.href='dashboard'" />
+				/></a>
 
-		</div>
+		</div> 
 	</form>
 </body>
 </html>

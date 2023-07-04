@@ -1,6 +1,7 @@
 package com.mega.blog.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +17,16 @@ public class BoardServiceImpl implements BoardService {
 
 //	글목록
 	@Override
-	public List<BoardVO> getBoardList(Criteria cri) {
+	public List<BoardVO> getBoardList(Criteria cri, Map<String, Object> paramMap) {
 
-		return boardDAO.getBoardList(cri);
+		return boardDAO.getBoardList(cri,paramMap);
 	}
 
 	// 카운트
 	@Override
-	public int countBoardList() {
+	public int countBoardList(Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return boardDAO.countBoardList();
+		return boardDAO.countBoardList(paramMap);
 	}
 
 //	글 insert
@@ -51,6 +52,12 @@ public class BoardServiceImpl implements BoardService {
 	public int deleteBoard(int id) {
 		return boardDAO.deleteBoard(id);
 
+	}
+
+	@Override
+	public int updateBoard(int id, BoardVO board) {
+		return boardDAO.updateBoard(id, board);
+		 
 	}
 
 }

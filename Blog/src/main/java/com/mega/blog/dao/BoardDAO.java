@@ -2,6 +2,7 @@ package com.mega.blog.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,15 @@ public class BoardDAO {
 	public SqlSession sqlSession;
 
 //	글목록
-	public List<BoardVO> getBoardList(Criteria cri) {
-
-		return sqlSession.selectList("getBoardList", cri);
+	public List<BoardVO> getBoardList(Criteria cri, Map<String, Object> paramMap) {
+		paramMap.put("cri", cri);
+		
+		return sqlSession.selectList("getBoardList", paramMap);
 	}
 
 //	페이징 카운트
-	public int countBoardList() {
-		return sqlSession.selectOne("countBoardList");
+	public int countBoardList(Map<String, Object> paramMap) {
+		return sqlSession.selectOne("countBoardList",paramMap);
 	}
 
 //	글쓰기
@@ -49,5 +51,14 @@ public class BoardDAO {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("id", id);
 		return sqlSession.delete("deleteBoard", map);
+	}
+	
+//	글수정++
+	public int updateBoard(int id, BoardVO board) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("id", id);
+		map.put("subject", board);
+		
+		return sqlSession.update("updateBoard", board);
 	}
 }

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="../../resources/loginPage.css" />
+<link rel="stylesheet" type="text/css" href="../../resources/css/loginPage.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
 
 <script type="text/javascript">

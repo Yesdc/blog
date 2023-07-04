@@ -1,15 +1,16 @@
 package com.mega.blog.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.mega.blog.vo.BoardVO;
 import com.mega.blog.vo.Criteria;
 
 public interface BoardService {
 //	글목록
-	List<BoardVO> getBoardList(Criteria cri);
+	List<BoardVO> getBoardList(Criteria cri, Map<String, Object> paramMap);
 	
-	int countBoardList();
+	int countBoardList(Map<String, Object> paramMap);
 	
 //	글쓰기 insert
 	int boardwrite(BoardVO board);
@@ -19,6 +20,8 @@ public interface BoardService {
 	
 //	조회수+
 	void viewsUpdate(int id);
+	
+	int updateBoard(int id, BoardVO board);
 	
 	int deleteBoard(int id);
 }
