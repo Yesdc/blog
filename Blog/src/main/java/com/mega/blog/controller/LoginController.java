@@ -3,17 +3,23 @@ package com.mega.blog.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -67,7 +73,7 @@ public class LoginController {
 	public String  dashBoardSearch(Model model, Criteria cri, @RequestParam Map<String, Object> paramMap) {
 		
 		List<BoardVO> result = boardService.getBoardList(cri,paramMap);
-		System.out.println(result);
+//		System.out.println(result);
 
 //		ModelAndView mav = new ModelAndView();
 //		mav.addObject("result",result); 
@@ -138,17 +144,47 @@ public class LoginController {
 	}
 
 //	글쓰기 insert
-	@RequestMapping("Login/boardinsert")
+//	 @RequestParam("file") MultipartFile[] file
+	@RequestMapping(value = "/Login/boardinsert", method = RequestMethod.POST)
 	@ResponseBody
-	public int boardwrite(BoardVO board) {
-		int result = 0;
-	
-//		글쓰기
-		result = boardService.boardwrite(board);
-		return result;
+	public int boardinsert(BoardVO board) {
+	    int result = 0;
+	  
+	    // 글쓰기 로직
+	    result = boardService.boardwrite(board);
+	    // paramMap을 출력하거나 사용할 수도 있습니다.
+	    System.out.println("board : " + board);
+	  
+           
+	    // 파일 업로드 처리 로직
+	                   
+	    return result;
 	}
 
+//	글쓰기 insert
+//	 @RequestParam("file") MultipartFile[] file
+	@RequestMapping(value = "/Login/insertFile", method = RequestMethod.POST)
+	@ResponseBody
+	public int insertFile(MultipartFile[] file, BoardVO board) {
+	    int result = 0;
+	  
+	    System.out.println(board);
+	    System.out.println(file.length);
+	    for(int i=0; i<file.length; i++) {
+	        System.out.println("================== file start ==================");
+	        System.out.println("파일 이름: "+file[i].getName());
+	        System.out.println("파일 실제 이름: "+file[i].getOriginalFilename());
+	        System.out.println("파일 크기: "+file[i].getSize());
+	        System.out.println("content type: "+file[i].getContentType());
+	        System.out.println("================== file   END ==================");
 
+	    }     
+            
+	    // 파일 업로드 처리 로직 
+	                   
+	    return result;
+	}
+ 
 	
 //	글보기
 	@RequestMapping("Login/boardDetail")
@@ -170,6 +206,7 @@ public class LoginController {
  
 //	글수정 페이지
 	@RequestMapping("Login/boardModify")
+	
 	public String boardModify(int id, Criteria cri, Model model) {
 		BoardVO result = boardService.getBoardDetail(id);
 		PageMaker pageMaker = new PageMaker();

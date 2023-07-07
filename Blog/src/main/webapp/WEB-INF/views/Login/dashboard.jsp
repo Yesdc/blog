@@ -70,7 +70,7 @@
 			 
 			},
 			success : function(data) {
-				console.log(data);
+				
 				 $("#dashBoardList").empty();
 				$("#dashBoardList").append(data);
 				

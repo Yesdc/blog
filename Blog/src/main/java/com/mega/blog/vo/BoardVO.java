@@ -1,6 +1,8 @@
 package com.mega.blog.vo;
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class BoardVO { 
 
 private int id; 
