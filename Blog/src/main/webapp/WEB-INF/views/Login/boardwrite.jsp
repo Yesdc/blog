@@ -41,7 +41,7 @@
 
 	}
  	
- 	
+ 	 
  	function boardWrite(sub, con,dataWithFile) {
  		
 		if (confirm("등록하시겠습니까?") == true){    //확인
@@ -62,17 +62,13 @@
 				$.ajax({
 				    url: '/Login/insertFile',
 				    type: 'POST',
-				    data:  {
-				    	dataWithFile : dataWithFile,
-				    	subject : sub,
-						context : con,  
-				    }, 
+				    data:dataWithFile,
 				    processData: false,
-				    contentType: false,
+				    contentType: false, 
 				    success : function(data) {
 				    	 if (data == 1) {
 								alert("글 등록이 완료되었습니다.");
-								location.href = "/Login/dashboard";
+								location.href = "/Login/dashboard"; 
 							} else {
 								alert("글 등록 실패");
 							} 

@@ -151,7 +151,7 @@ public class LoginController {
 	    int result = 0;
 	  
 	    // 글쓰기 로직
-	    result = boardService.boardwrite(board);
+	//    result = boardService.boardwrite(board);
 	    // paramMap을 출력하거나 사용할 수도 있습니다.
 	    System.out.println("board : " + board);
 	  
@@ -165,10 +165,9 @@ public class LoginController {
 //	 @RequestParam("file") MultipartFile[] file
 	@RequestMapping(value = "/Login/insertFile", method = RequestMethod.POST)
 	@ResponseBody
-	public int insertFile(MultipartFile[] file, BoardVO board) {
+	public int insertFile(MultipartFile[] file) {
 	    int result = 0;
 	  
-	    System.out.println(board);
 	    System.out.println(file.length);
 	    for(int i=0; i<file.length; i++) {
 	        System.out.println("================== file start ==================");
