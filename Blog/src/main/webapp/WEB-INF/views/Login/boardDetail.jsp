@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/jstlHeader.jsp"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -76,14 +77,34 @@ function boardUpdate(){
 						<td colspan="2" type="text">${result.context}</td>
 					</tr>
 					<tr>
-						<th colspan="2">조회수: ${result.views}</th>
+						<th colspan="2">조회수: ${result.views}</th> 
 
-					</tr>
+					</tr> 
 					<tr>
 						<th colspan="2">좋아요: ${result.likes}</th>
 
 					</tr>
-
+					<tr>
+						<td colspan="2">
+					<c:choose>
+					    <c:when test="${fn:length(file) > 0 }">
+					    <div class="blog-file">
+					        <ul>
+					        <c:forEach items="${file }" var="file">
+					            <li> 
+					                <span class="file-img"></span>
+					                <div class="file-info">
+					                    <a href='<c:url value="/filedownload?IDX=${file.IDX }"/>'><i class="fa fa-camera"></i> ${file.ORG_FILE_NAME }</a>
+					                    <span>${file.FILE_SIZE }kb</span>
+					                </div>
+					            </li>
+					        </c:forEach>
+					        </ul>
+					    </div>
+					    </c:when>
+					</c:choose>  
+						</td>
+					</tr>
 				</tbody>               
 			</table>
 			<a href='<c:url value='/Login/boardModify${pageMaker.makeQueryPage(result.id, pageMaker.cri.page) }'/>'><input type="button" value="수정" class="btn btn-outline-dark"

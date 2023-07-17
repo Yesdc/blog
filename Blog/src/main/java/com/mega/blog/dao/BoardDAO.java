@@ -32,7 +32,29 @@ public class BoardDAO {
 	public int boardwrite(BoardVO board) {
 		return sqlSession.insert("boardwrite", board);
 	}
+	
+//	파일등록
+	public void insertFile(Map<String, Object> map) {
+		 sqlSession.insert("insertFile", map);
+	}
+ 
+//	파일목록 가져오기
+	@SuppressWarnings("unchecked")
+    public List<Map<String, Object>> detailFile(int id) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("id", id);   
+        return sqlSession.selectList("detailFile", map);
+    }
 
+//	파일삭제, 업데이트
+	// BoardDAO
+	public void updateDeleteFile(Map<String, Object> list) {
+	   // TODO Auto-generated method stub
+		sqlSession.update("deleteFile", list);
+	}  
+	 
+	
+	
 //	글내용 가져오기
 	public BoardVO getBoardDetail(int id) {
 		HashMap<String, Object> map = new HashMap<String, Object>();

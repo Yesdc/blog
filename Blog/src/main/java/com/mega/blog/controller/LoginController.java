@@ -147,27 +147,14 @@ public class LoginController {
 //	 @RequestParam("file") MultipartFile[] file
 	@RequestMapping(value = "/Login/boardinsert", method = RequestMethod.POST)
 	@ResponseBody
-	public int boardinsert(BoardVO board) {
+	public int boardinsert(BoardVO board,MultipartFile[] file) throws Exception {
 	    int result = 0;
 	  
 	    // 글쓰기 로직
-	//    result = boardService.boardwrite(board);
-	    // paramMap을 출력하거나 사용할 수도 있습니다.
+	    result = boardService.boardwrite(board,file);
+	    // paramMap을 출력하거나 사용할 수도 있습니다. 
 	    System.out.println("board : " + board);
-	  
-           
-	    // 파일 업로드 처리 로직
-	                   
-	    return result;
-	}
-
-//	글쓰기 insert
-//	 @RequestParam("file") MultipartFile[] file
-	@RequestMapping(value = "/Login/insertFile", method = RequestMethod.POST)
-	@ResponseBody
-	public int insertFile(MultipartFile[] file) {
-	    int result = 0;
-	  
+	     
 	    System.out.println(file.length);
 	    for(int i=0; i<file.length; i++) {
 	        System.out.println("================== file start ==================");
@@ -177,13 +164,15 @@ public class LoginController {
 	        System.out.println("content type: "+file[i].getContentType());
 	        System.out.println("================== file   END ==================");
 
-	    }     
-            
-	    // 파일 업로드 처리 로직 
+	    }         
+             
+           
+	    // 파일 업로드 처리 로직
 	                   
 	    return result;
 	}
  
+
 	
 //	글보기
 	@RequestMapping("Login/boardDetail")
@@ -191,15 +180,18 @@ public class LoginController {
 //		조회수 ++
 		boardService.viewsUpdate(id);
 //		글내용 가져오기
-		BoardVO result = boardService.getBoardDetail(id);
+		 Map<String, Object> result = boardService.getBoardDetail(id);
 
-		model.addAttribute("result", result);
+		model.addAttribute("result", result.get("board"));
+		model.addAttribute("file", result.get("file"));
+		
+		    
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		model.addAttribute("pageMaker", pageMaker);
 		// ModelAndView mav = new ModelAndView();
 //		mav.addObject("result",result);
-		System.out.println(result);
+		System.out.println(result);  
 		return "Login/boardDetail";
 	}
  
@@ -207,23 +199,28 @@ public class LoginController {
 	@RequestMapping("Login/boardModify")
 	
 	public String boardModify(int id, Criteria cri, Model model) {
-		BoardVO result = boardService.getBoardDetail(id);
+		Map<String, Object> result = boardService.getBoardDetail(id);
+		System.out.println(result.get("board"));
+		
+		
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		model.addAttribute("pageMaker", pageMaker);
 		
-		model.addAttribute("result", result);
+		model.addAttribute("result", result.get("board"));
+		model.addAttribute("file", result.get("file")); 
 
-		return "Login/boardModify";
+		return "Login/boardModify"; 
 	}
 
 //	글수정 update
 	@RequestMapping("Login/updateBoard")
 	@ResponseBody
-	public int upadateBoard(int id, BoardVO board) {
+	public int upadateBoard(BoardVO board,MultipartFile[] file) throws Exception{
+		System.out.println("board: "+board);
 		
 		int result = 0;
-		result = boardService.updateBoard(id, board);
+		result = boardService.updateBoard(board, file); 
 		return result;
 	}
 
@@ -234,7 +231,7 @@ public class LoginController {
 		int result = 0;
 //		글쓰기
 		result = boardService.deleteBoard(id);
-		;
+		
 
 		redAttr.addAttribute("page", cri.getPage());
 		redAttr.addAttribute("perPagNum", cri.getPerPageNum());

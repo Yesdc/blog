@@ -26,10 +26,48 @@ ORDER BY create_time DESC LIMIT #{cri.pageStart}, #{cri.perPageNum};
 </select>
 
 <!-- 글쓰기 -->
-<insert id="boardwrite">
+<insert id="boardwrite" useGeneratedKeys="true" keyProperty="id">
 insert into board (id,subject,context,attachments,likes,views,create_time,update_time) 
 values(#{id},#{subject},#{context},#{attachments},#{likes},#{views},now(),null);
 </insert>
+<!-- 파일넣기 --> 
+<insert id="insertFile" parameterType="hashmap">
+    <![CDATA[
+        INSERT INTO tb_file
+        (
+            BOARD_IDX,
+            ORG_FILE_NAME,
+            SAVE_FILE_NAME,
+            FILE_SIZE,
+            CREA_DATE, 
+            UPDATE_DATE
+        )
+        VALUES
+        (
+            #{ BOARD_IDX},
+            #{ ORG_FILE_NAME},
+            #{ SAVE_FILE_NAME},
+            #{ FILE_SIZE},
+            SYSDATE(),
+            SYSDATE()
+        ) 
+    ]]>
+</insert>
+
+<!--파일삭제  -->
+<update id="deleteFile">
+   <![CDATA[
+       UPDATE
+           tb_file
+       SET
+           DEL_CHK = 'Y'
+       WHERE
+           IDX = #{ IDX}
+   ]]>
+</update>
+
+
+
 
 <!-- 페이징 카운트세기 -->
 <select id="countBoardList" resultType="Integer">
@@ -62,6 +100,41 @@ values(#{id},#{subject},#{context},#{attachments},#{likes},#{views},now(),null);
 <select id="getBoardDetail" resultType="board">
 SELECT * FROM board where id = #{id} ;
 </select>
+
+<!-- 파일 가져오기 -->
+<select id="detailFile" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT
+                IDX,
+                ORG_FILE_NAME,
+                ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+            FROM
+                tb_file
+            WHERE
+                BOARD_IDX = #{ id}
+                AND
+                DEL_CHK = 'N'
+        ]]>        
+    </select>
+
+<!-- 파일다운 -->
+ <select id="selectFileInfo" parameterType="hashmap" resultType="hashmap">
+     <![CDATA[
+         SELECT
+             IDX,
+             BOARD_IDX,
+             ORG_FILE_NAME,
+             SAVE_FILE_NAME
+         FROM
+             tb_file     
+         WHERE
+             IDX = #{ id}
+     ]]>
+    </select>
+
+
+
+
 
 <!-- update -->
 <!-- 조회수++ -->

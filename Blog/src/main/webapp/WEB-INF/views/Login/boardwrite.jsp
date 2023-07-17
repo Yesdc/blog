@@ -3,7 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,38 +44,28 @@
  	function boardWrite(sub, con,dataWithFile) {
  		
 		if (confirm("등록하시겠습니까?") == true){    //확인
-			  
-		    for (let key of dataWithFile.keys()) {
-		    	console.log(key, ":", dataWithFile.get(key));
-		    } 
-		                      
+			dataWithFile.append("subject", sub); // VO에 subject 추가
+		    dataWithFile.append("context", con); // VO에 context 추가
+
+		 
+		                       
 		    $.ajax({
 		        url: "/Login/boardinsert",
-		        type: 'POST',  
-		        data: { 
-					subject : sub,
-					context : con       
-				}, 
+		        type: 'POST', 
+				enctype :'multipart/form-data',
+			    data:dataWithFile,
+			    processData: false, 
+			    contentType: false, 
 			success : function(data) {
-				
-				$.ajax({
-				    url: '/Login/insertFile',
-				    type: 'POST',
-				    data:dataWithFile,
-				    processData: false,
-				    contentType: false, 
-				    success : function(data) {
+			
 				    	 if (data == 1) {
 								alert("글 등록이 완료되었습니다.");
 								location.href = "/Login/dashboard"; 
 							} else {
 								alert("글 등록 실패");
 							} 
-				    	
-				    }
-				 
-				})
-				
+				    	    
+				  
 				
 				
 			},
@@ -134,10 +123,10 @@
 									<input type="file" name="file" id='file' multiple><a
 										href='#this' name='file-delete'>삭제</a>
 								</div>
-							</div>
-
-
-						</td>
+			 				</div>
+ 
+							</form>
+						</td> 
 					</tr>
 
 				</tbody>
@@ -147,8 +136,9 @@
 				class="btn btn-outline-dark"> <input type="button"
 				value="취소" onclick="javascript:location.href='dashboard'"
 				/  class="btn btn-outline-dark">
-		</div>
-	</form>       
+		</div>    
+	
+	
 	<script type="text/javascript">
 		 // fileIndex 변수를 전역 범위로 이동
 		

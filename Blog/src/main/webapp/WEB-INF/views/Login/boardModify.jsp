@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/jstlHeader.jsp"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
 <html>
@@ -13,51 +14,57 @@
 <meta charset="UTF-8">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
 <meta charset="UTF-8">
 <title>글 작성</title>
-<script type="text/javascript">
-	function boardValidation() {
-
+<script type="text/javascript">      
+	function boardValidation() {  
+ 
 		var subject = $("#subject").val();
 		var content = $("#content").val();
-		var id = $("#id").val();
-
+		var frm = document.getElementById("myForm");
+		frm.enctype = 'multipart/form-data';
+		var dataWithFile = new FormData(frm); 
+		           
+		var id = $("#id").val();  
+ 
 		if (!subject) {
 			alert("제목 입력은 필수입니다.");
 			$("#subject").focus();
 			return false;
 		} else if (!content) {
 			alert("내용 입력은 필수 입니다.");
-			$("#content").focus();
+			$("#content").focus(); 
 			return false;
 		} else {
-			updateBoard(subject, content,id);
-		}
- 
+			updateBoard(subject, content, id , dataWithFile);
+		} 
+  
 	}
 
-	function updateBoard(sub, con,id) {
+	function updateBoard(sub, con, id, dataWithFile) {
 		if (confirm("수정하시겠습니까?") == true){    //확인
-
+			dataWithFile.append("subject", sub); // VO에 subject 추가
+		    dataWithFile.append("context", con); // VO에 context 추가
+		    dataWithFile.append("id", id); // VO에 context 추가
+		    for (let key of dataWithFile.keys()) {
+		    	console.log(key, ":", dataWithFile.get(key));
+		    }
 		$.ajax({
 
 			url : "/Login/updateBoard",
 			type : 'POST',
-			data : {
-				
-				id : id,
-				subject : sub,
-				context : con
-			},
+			enctype :'multipart/form-data',
+		    data:dataWithFile,
+		    processData: false, 
+		    contentType: false, 
 			success : function(data) {
 				if (data == 1) {
 					alert("글 수정이 완료되었습니다.");
 					location.href = '<c:url value='/Login/boardDetail${pageMaker.makeQueryPage(result.id, pageMaker.cri.page) }'/>';
 				} else {
-					alert("글 수정 실패");
+					alert("글 수정 실패"); 
 				}
-			},
+			}, 
 			error : function() { 
 				console.log("error");
 			}
@@ -70,17 +77,18 @@
 		 }
 
 	}
+
 </script>
 </head>
 <body>
-	<form>
-<input type=hidden value="${result.id}" name="id" id="id">
+
+		<input type=hidden value="${result.id}" name="id" id="id">
 		<div class="container mt-3" style="margin-left: 22%">
 
 			<table class="table table-bordered" style="width: 70%">
 				<thead class="table-dark">
 					<tr>
-						<td colspan=2>글쓰기</td>
+						<td colspan=2>글수정</td>
 
 					</tr>
 				</thead>
@@ -98,8 +106,36 @@
 					<!--  <tr> 
                 <th>첨부파일: </th>
                 <td><input type="text" placeholder="파일을 선택하세요. " name="filename"/></td>
-            </tr> -->
-
+            </tr> --> 
+					<tr>
+						<td colspan=2>
+							<!-- 생략 -->
+							<form action='/Login/boardinsert' method="post" id="myForm">
+       
+				 				<div class="form-group file-group" id="file-list">
+				 				
+									<div class="file-add">
+										<a href="#this" onclick="addFile()"><span
+											class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+					 						파일추가</a>
+					 						
+									</div>
+							
+									<c:forEach items="${file }" var="file">
+										<div class="file-input">
+											<span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+											${file.ORG_FILE_NAME } <span>${file.FILE_SIZE }kb</span> 
+								 			<input type="hidden" name="IDX" value="${file.IDX }">
+											<a href='#this' name='file-delete'>삭제</a>
+										</div>         
+									</c:forEach>     
+								</div>
+				   
+						     </form> 
+					 	   
+						</td>
+					</tr>    
+ 
 
 				</tbody>
 			</table>
@@ -109,7 +145,31 @@
 				href='<c:url value='/Login/boardDetail${pageMaker.makeQueryPage(result.id, pageMaker.cri.page) }'/>'>
 				<input type="button" value="취소" class="btn btn-outline-dark">
 			</a>
-		</div>
-	</form>
+		</div> 
+
+
+
+	<script type="text/javascript">
+    $(document).ready(function() {
+        $("a[name='file-delete']").on("click", function(e) {
+            e.preventDefault();
+            deleteFile($(this));
+        });
+    })
+ 
+    function addFile() {
+        var str = "<div class='file-input'><input type='file' name='file' multiple><a href='#this' name='file-delete'>삭제</a></div>";
+        $("#file-list").append(str);
+        $("a[name='file-delete']").on("click", function(e) {
+            e.preventDefault();
+            deleteFile($(this));
+        });
+    } 
+ 
+    function deleteFile(obj) {
+        obj.parent().remove();
+    }
+	</script>
+
 </body>
 </html>

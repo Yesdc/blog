@@ -1,5 +1,6 @@
 package com.mega.blog.vo;
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,12 +10,13 @@ private int id;
 private String subject; 
 private String context; 
 private String attachments; 
-private int likes; 
+private int likes;  
 private int views; 
 private Date create_time; 
 private Date update_time;
 private String searchKey; 
 private String sname;
+Map<String, Integer> IDX;
 public int getId() {
 	return id;
 }
@@ -75,13 +77,18 @@ public String getSname() {
 public void setSname(String sname) {
 	this.sname = sname;
 }
+public Map<String, Integer> getIDX() {
+	return IDX;
+}
+public void setIDX(Map<String, Integer> iDX) {
+	IDX = iDX;
+}
 @Override
 public String toString() {
 	return "BoardVO [id=" + id + ", subject=" + subject + ", context=" + context + ", attachments=" + attachments
 			+ ", likes=" + likes + ", views=" + views + ", create_time=" + create_time + ", update_time=" + update_time
-			+ ", searchKey=" + searchKey + ", sname=" + sname + "]";
+			+ ", searchKey=" + searchKey + ", sname=" + sname + ", IDX=" + IDX + "]";
 }
 
-
-
+  
 }

@@ -1,17 +1,35 @@
-@Component("fileUtils")
+package com.mega.blog.common;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+ 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.mega.blog.vo.BoardVO;
+ 
+@Component
 public class FileUtils {
-    
-    private Log log = LogFactory.getLog(this.getClass());
-    
+     
+	
+	  private Log log = LogFactory.getLog(this.getClass());
+	
     @Resource(name="uploadPath")
     String uploadPath;
  
-    public List<Map<String, Object>> parseFileInfo(Map<String, Object> map, MultipartFile[] file) throws Exception {
-        
-        String boardIDX = String.valueOf(map.get("idx"));
-        String creaID = (String) map.get("crea_id");
-        
-        List<Map<String, Object>> fileList = new ArrayList<Map<String, Object>>(); 
+    public List<Map<String, Object>> parseFileInfo(BoardVO board, MultipartFile[] file) throws Exception {
+    	
+        String boardIDX = String.valueOf(board.getId());
+      
+        List<Map<String, Object>> fileList = new ArrayList<Map<String, Object>>();
  
         File target = new File(uploadPath);
         if(!target.exists()) target.mkdirs();
@@ -31,7 +49,7 @@ public class FileUtils {
             log.debug("================== file   END ==================");
  
             target = new File(uploadPath, saveFileName);
-            file[i].transferTo(target);
+            file[i].transferTo(target); 
             
             Map<String, Object> fileInfo = new HashMap<String, Object>();
  
@@ -39,7 +57,7 @@ public class FileUtils {
             fileInfo.put("ORG_FILE_NAME", orgFileName);
             fileInfo.put("SAVE_FILE_NAME", saveFileName);
             fileInfo.put("FILE_SIZE", saveFileSize);
-            fileInfo.put("CREA_ID", creaID);
+  
             fileList.add(fileInfo);
             
         }
